@@ -1,0 +1,32 @@
+
+# STAGE 1: BUILDER
+FROM python:3.13-slim-trixie AS builder
+
+WORKDIR /build
+
+# Copy dependency list
+COPY requirements.txt .
+
+# Install dependencies into a separate directory
+RUN pip install --no-cache-dir --target=/install -r requirements.txt
+
+
+# STAGE 2: DISTROLESS RUNTIME
+FROM gcr.io/distroless/python3-debian13:nonroot
+
+WORKDIR /app
+
+# Copy dependencies from builder stage
+COPY --from=builder /install /app/deps
+
+# Copy Flask application
+COPY app.py .
+COPY templates/ ./templates/
+
+# Tell Python where dependencies are located
+ENV PYTHONPATH=/app/deps
+
+EXPOSE 5000
+
+# Start Flask application
+CMD ["app.py"]
