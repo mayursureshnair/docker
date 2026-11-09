@@ -1,129 +1,185 @@
-# Docker Image Optimization & Deployment using Multi‑Stage and Distroless Builds
+# 🐳 Docker Image Optimization & Deployment
 
-## Overview
+### Multi-Stage and Distroless Builds with Docker Hub & Amazon ECR
 
-This repository demonstrates how to **build**, **optimize**, and **deploy** a simple Flask calculator application using Docker and AWS.  The main goals are:
-
-- Compare three Docker image strategies: **Single‑Stage**, **Multi‑Stage**, and **Distroless**.
-- Show a ~50 % size reduction when using a Distroless base compared to the Single‑Stage build.
-- Publish images to **Docker Hub** and a private **Amazon ECR** repository.
-- Deploy the container on an AWS EC2 instance using an **IAM role** for secure ECR access (no long‑lived AWS credentials stored).
-
-The project is organized as follows:
-
-```
-├─ app/                     # Flask application source
-├─ Dockerfile.single        # Single‑stage build
-├─ Dockerfile.multi         # Multi‑stage build
-├─ Dockerfile.distroless    # Distroless build
-├─ images/                  # Screenshots (add the provided images here)
-└─ README.md
-```
+Built and deployed a **Flask Calculator** application using Docker and AWS, exploring different containerization strategies to improve image efficiency and deployment.
 
 ---
 
-## Image Size Comparison
+## 📌 Highlights
 
-| Build Type | Image Size |
-|------------|-----------|
-| Single‑Stage | ![Single‑Stage Size](images/media_1794199125716_64dbad8d.jpg) |
-| Multi‑Stage | ![Multi‑Stage Size](images/media_1794199159371_e2d7fa2f.jpg) |
-| Distroless | ![Distroless Size](images/media_1794199182412_a48ae917.png) |
-
-> **Note:** The Distroless image is roughly **50 %** smaller than the Single‑Stage image.
-
----
-
-## Building the Images
-
-```bash
-# Single‑stage
-docker build -f Dockerfile.single -t mayur/calculator:single .
-
-# Multi‑stage
-docker build -f Dockerfile.multi -t mayur/calculator:multi .
-
-# Distroless
-docker build -f Dockerfile.distroless -t mayur/calculator:distroless .
-```
-
-## Publishing to Docker Hub
-
-```bash
-docker login            # Authenticate to Docker Hub
-docker tag mayur/calculator:distroless mayur/calculator:latest
-docker push mayur/calculator:latest
-```
-
-## Publishing to Amazon ECR
-
-1. **Create a private ECR repository** (e.g., `calculator`).
-2. **Authenticate Docker to ECR** using the AWS CLI:
-
-```bash
-aws ecr get-login-password --region <region> |
-  docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<region>.amazonaws.com
-```
-
-3. **Tag and push** the Distroless image:
-
-```bash
-docker tag mayur/calculator:distroless \
-  <aws_account_id>.dkr.ecr.<region>.amazonaws.com/calculator:distroless
-
-docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/calculator:distroless
-```
+- ✅ Created **Single-Stage**, **Multi-Stage**, and **Distroless** Docker images
+- ✅ Achieved approximately **50% image size reduction** using Distroless compared to Single-Stage
+- ✅ Published and pulled container images using **Docker Hub**
+- ✅ Created a private **Amazon ECR** repository and pushed the optimized (Distroless) image
+- ✅ Configured an **EC2 IAM role** for secure ECR access without storing long-lived AWS credentials
+- ✅ Pulled and deployed the container on an **AWS EC2** instance
+- ✅ Verified the application through its **public endpoint**
 
 ---
 
-## Deploying on an EC2 Instance
-
-1. **Attach an IAM role** with `AmazonEC2ContainerRegistryReadOnly` permission to the EC2 instance.
-2. **Install Docker** on the instance (if not already installed).
-3. **Pull and run** the image directly from ECR:
-
-```bash
-aws ecr get-login-password --region <region> |
-  docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<region>.amazonaws.com
-
-docker run -d -p 80:5000 \
-  <aws_account_id>.dkr.ecr.<region>.amazonaws.com/calculator:distroless
-```
-
-4. Verify the deployment by visiting the public DNS of the EC2 instance (e.g., `http://<ec2-public-dns>/`).
-
-![Deployment Verification](images/media_1794199194638_986f1a0e.jpg)
-
----
-
-## Repository Structure
+## 🏗️ Project Structure
 
 ```
 multistage-docker/
-│
-├─ app/                # Flask calculator source code
-│   ├─ __init__.py
-│   └─ routes.py
-│
-├─ Dockerfile.single   # Single‑stage Dockerfile
-├─ Dockerfile.multi    # Multi‑stage Dockerfile
-├─ Dockerfile.distroless # Distroless Dockerfile
-│
-├─ images/             # <-- place the four screenshots here
-│   ├─ media_1794199125716_64dbad8d.jpg
-│   ├─ media_1794199159371_e2d7fa2f.jpg
-│   ├─ media_1794199182412_a48ae917.png
-│   └─ media_1794199194638_986f1a0e.jpg
-│
-└─ README.md           # This file
+├── .dockerignore
+├── app.py                 # Flask calculator application
+├── requirements.txt       # Python dependencies
+├── Dockerfile             # Dockerfile (supports single/multi/distroless stages)
+├── templates/
+│   └── index.html         # Calculator UI
+├── images/                # Screenshots & evidence
+└── README.md
 ```
 
 ---
 
-## License
+## 🔨 Building the Docker Images
 
-This project is licensed under the **MIT License** – see the `LICENSE` file for details.
+### Single-Stage Build
+
+```bash
+docker build -t flask-calculator:single .
+```
+
+![Single-Stage Build](images/media_1794199125716_64dbad8d.jpg)
+
+### Multi-Stage Build
+
+```bash
+docker build -t flask-calculator:multi .
+```
+
+### Distroless Build
+
+```bash
+docker build -t flask-calculator:distroless .
+```
 
 ---
 
-*Happy containerizing!*
+## 📊 Image Size Comparison
+
+| Build Type   | Image Size |
+|:-------------|:-----------|
+| **Single-Stage**  | 200.77 MB  |
+| **Multi-Stage**   | 186.24 MB  |
+| **Distroless**    | 97.86 MB   |
+
+> 💡 The Distroless image is roughly **50% smaller** than the Single-Stage image — that's over **100 MB** saved!
+
+### Docker Desktop — Image List
+
+![Docker Desktop Images](images/media_1794199159371_e2d7fa2f.jpg)
+
+### Terminal — `docker images` output
+
+![docker images CLI](images/media_1794199182412_a48ae917.png)
+
+---
+
+## 🧪 Local Testing
+
+Ran the container locally and verified the Flask Calculator on `localhost:5002`:
+
+![Localhost Calculator](images/media_1794199194638_986f1a0e.jpg)
+
+---
+
+## 📤 Publishing to Docker Hub
+
+Pushed the **Distroless image** (lowest storage footprint) to Docker Hub:
+
+```bash
+docker login
+docker tag flask-calculator:distroless mayursureshnair/flask-calculator:distroless
+docker push mayursureshnair/flask-calculator:distroless
+```
+
+![Docker Hub Repository](images/media_1794199792685_13d59f4b.png)
+
+---
+
+## ☁️ Publishing to Amazon ECR
+
+Created a **private ECR repository** and pushed the Distroless image:
+
+```bash
+# Authenticate Docker to ECR
+aws ecr get-login-password --region us-east-1 |
+  docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com
+
+# Tag and push
+docker tag flask-calculator:distroless \
+  <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com/flask-calculator:distroless
+
+docker push <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com/flask-calculator:distroless
+```
+
+![Amazon ECR Repository](images/media_1794199811195_85a7dfed.png)
+
+---
+
+## 🚀 Deploying on AWS EC2
+
+### Steps
+
+1. **Launched an EC2 instance** and attached an **IAM role** with `AmazonEC2ContainerRegistryReadOnly` permission for secure ECR access (no long-lived credentials).
+2. **Installed Docker CLI and AWS CLI** on the EC2 instance.
+3. **Authenticated to ECR** and **pulled the Distroless image**:
+
+```bash
+aws ecr get-login-password --region us-east-1 |
+  sudo docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com
+
+sudo docker pull <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com/flask-calculator:distroless
+```
+
+![ECR Pull on EC2](images/media_1794199829887_b000ba71.jpg)
+
+4. **Ran the container**, mapping port 80 → 5000:
+
+```bash
+sudo docker run -d \
+  --name calculator-ecr \
+  -p 80:5000 \
+  <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com/flask-calculator:distroless
+```
+
+![Docker Run & Container Status](images/media_1794199899682_d04fb03f.png)
+
+5. **Verified the deployment** by visiting the EC2 public IP in the browser:
+
+![Deployed Flask Calculator on EC2](images/media_1794199933531_d0727288.jpg)
+
+---
+
+## 🛠️ Tech Stack
+
+| Tool / Service | Purpose |
+|:---------------|:--------|
+| **Python + Flask** | Web application framework |
+| **Docker** | Containerization |
+| **Docker Hub** | Public container registry |
+| **Amazon ECR** | Private container registry |
+| **AWS EC2** | Cloud compute for deployment |
+| **IAM Roles** | Secure, credential-less ECR access |
+
+---
+
+## 📝 Key Takeaways
+
+- **Multi-Stage builds** strip out build-time dependencies, producing leaner images.
+- **Distroless images** go further by removing the OS shell and package manager entirely — ideal for production.
+- **IAM roles** on EC2 eliminate the need to manage AWS access keys manually.
+- Choosing the right base image strategy can cut your container size (and attack surface) in half.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+*Happy containerizing! 🐳*
