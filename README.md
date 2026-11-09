@@ -66,7 +66,9 @@ docker build -t flask-calculator:distroless .
 | **Multi-Stage**   | 186.24 MB  | 45.3 MB  |
 | **Distroless**    | 97.86 MB   | 24.2 MB  |
 
-> 💡 The Distroless image is roughly **50% smaller** than the Single-Stage image — that's over **100 MB** saved!
+> 💡 The Distroless image is roughly **50% smaller** than the Single-Stage image !
+
+> Note: This is a very basic application with minimal dependencies, which is why there isn't much to shrink the image size. As the application gets bigger and more complex, Docker can reduce the image size by up to 80% or even 90% for some Golang distroless images.
 
 ### Docker Desktop — Image List
 
