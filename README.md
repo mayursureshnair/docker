@@ -60,11 +60,11 @@ docker build -t flask-calculator:distroless .
 
 ## 📊 Image Size Comparison
 
-| Build Type   | Disk Usage | Image Size |
-|:-------------|:-----------|:-----------|
-| **Single-Stage**  | 200.77 MB  | 49.0 MB  |
-| **Multi-Stage**   | 186.24 MB  | 45.3 MB  |
-| **Distroless**    | 97.86 MB   | 24.2 MB  |
+| Build Type   | Disk Usage | Image Size | Localhost
+|:-------------|:-----------|:-----------|:-----------|
+| **Single-Stage**  | 200.77 MB  | 49.0 MB  | 5000  |
+| **Multi-Stage**   | 186.24 MB  | 45.3 MB  | 5001  |
+| **Distroless**    | 97.86 MB   | 24.2 MB  | 5002  |
 
 > 💡 The Distroless image is roughly **50% smaller** than the Single-Stage image !
 
